@@ -1,4 +1,5 @@
 import java.sql.Date;
+import java.util.List;
 
 public class Reiziger {
 
@@ -7,6 +8,7 @@ public class Reiziger {
     private String tussenvoegsel;
     private String achternaam;
     private Date geboortedatum;
+    private List<Adres> adressen;
 
     public Reiziger(int Rid, String Vl, String Tv, String An, Date Gd){
         this.reiziger_id = Rid;

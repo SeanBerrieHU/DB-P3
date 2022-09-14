@@ -1,7 +1,9 @@
 import java.sql.*;
 import java.util.List;
 
+
 public class Main {
+
     private static Connection connection;
 
     public static void main(String [] args) throws SQLException {
@@ -24,10 +26,14 @@ public class Main {
            //st.close();
            //closeConnection();
 
+            ReizigerDAOPsql rdao_reiziger = new ReizigerDAOPsql(connection);
+            AdresDAOPsql rdao_adres = new AdresDAOPsql(connection);
 
+            rdao_reiziger.setRdao(rdao_adres);
+            rdao_adres.setRdao(rdao_reiziger);
 
-            ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
-            testReizigerDAO(rdao);
+            testReizigerDAO(rdao_reiziger);
+            testAdresDAO(rdao_adres);
 
         } catch (SQLException sqlex){
             System.err.println("Reiziger informatie kan niet worden opgehaald: " + sqlex.getMessage());
@@ -91,7 +97,7 @@ public class Main {
     }
 
 
-    private void testAdresDAO(AdresDAO rdao) throws SQLException {
+    private static void testAdresDAO(AdresDAO rdao) throws SQLException {
 
         System.out.println("------------------ TEST AdresDAO ---------------");
 
@@ -101,25 +107,40 @@ public class Main {
         System.out.println("BEFORE SAVE:");
         System.out.println(adressen);
 
-        Adres adres_1 = new Adres(1,"6367 BB");
+        Adres adres_1 = new Adres(6,"6367BB", "20", "Hogeweg", "Voerendaal", 6);
         boolean response_save = rdao.save(adres_1);
 
         adressen = rdao.findAll();
         System.out.println("AFTER SAVE:");
         System.out.println(adressen);
 
+        System.out.println("Save successfull: " + response_save);
 
-        System.out.println("Save worked: " + response_save);
 
-        //System.out.println("------------------ TEST Update  ---------------");
-        //System.out.println("BEFORE SAVE:");
-        //System.out.println(adressen);
-        //boolean response_update = rdao.update();
+        //System.out.println("------------------ TEST Findby adres id ---------------");
+        Adres byIdAdres = rdao.findById(1);
+        System.out.print("[Test] Zoek adres met adres_id nummer 1: " + byIdAdres + "\n");
+
+
+        //System.out.println("------------------ TEST Findby reiziger id  ---------------");
+        String gbdatumUpdate = "2002-03-14";
+        Reiziger reiziger = new Reiziger(2, "B", "", "Willemsen", java.sql.Date.valueOf(gbdatumUpdate));
+        Adres byIdReiziger = rdao.findByReiziger(reiziger);
+        System.out.print("[Test] Zoek reiziger met reiziger_id nummer 2: " + byIdReiziger + "\n");
+
+
+       // System.out.println("------------------ TEST Update  ---------------");
+        Adres adres_1_update = new Adres(6,"3553EW", "29", "Sybrantshof", "Utrecht", 6);
+        boolean response_update = rdao.update(adres_1_update);
+        System.out.println("Update successfull: " + response_update);
 //
 //
         //System.out.println("------------------ TEST Delete  ---------------");
-        //
-        //boolean response_delete = rdao.delete();
+        boolean adres_1_delete = rdao.delete(adres_1_update);
+        System.out.println("Delete adres successfull: " + adres_1_delete);
+
+
+
 
     }
 

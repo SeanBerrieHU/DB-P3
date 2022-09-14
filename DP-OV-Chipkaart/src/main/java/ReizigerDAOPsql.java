@@ -7,11 +7,15 @@ import java.util.List;
  public class ReizigerDAOPsql implements ReizigerDAO {
 
     private Connection conn;
-    private AdresDAO adao;
+    private AdresDAO rdao;
 
     public ReizigerDAOPsql(Connection conn){
         this.conn = conn;
     }
+
+     public void setRdao(AdresDAO rdao){
+         this.rdao = rdao;
+     }
 
     @Override
     public boolean save(Reiziger r) throws SQLException {
