@@ -13,9 +13,9 @@ import java.util.List;
         this.conn = conn;
     }
 
-     public void setRdao(AdresDAO rdao){
-         this.rdao = rdao;
-     }
+    public void setRdao(AdresDAO rdao){
+        this.rdao = rdao;
+    }
 
     @Override
     public boolean save(Reiziger r) throws SQLException {

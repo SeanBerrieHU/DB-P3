@@ -26,6 +26,10 @@ public class Reiziger {
         this.reiziger_id = id;
     }
 
+    public void addAdres(Adres adres){
+        this.adressen.add(adres);
+    }
+
     public String getVoorletters(){
         return this.voorletters;
     }
