@@ -1,4 +1,3 @@
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,14 +6,14 @@ import java.util.List;
  public class ReizigerDAOPsql implements ReizigerDAO {
 
     private Connection conn;
-    private AdresDAO rdao;
+    private AdresDAO adao;
 
     public ReizigerDAOPsql(Connection conn){
         this.conn = conn;
     }
 
-    public void setRdao(AdresDAO rdao){
-        this.rdao = rdao;
+    public void setAdao(AdresDAO adao){
+        this.adao = adao;
     }
 
     @Override
@@ -29,6 +28,10 @@ import java.util.List;
             st.setString(4, r.getAchternaam());
             st.setDate(5, r.getGeboorteDatum());
             st.executeUpdate();
+
+            Adres adres = adao.findByReiziger(r);
+            r.addAdres(adres);
+
             return true;
 
         } catch(SQLException sqlex){
@@ -51,6 +54,10 @@ import java.util.List;
             st.setDate(5, r.getGeboorteDatum());
             st.setInt(6, r.getId());
             st.executeUpdate();
+
+            Adres adres = adao.findByReiziger(r);
+            r.addAdres(adres);
+
             return true;
 
         } catch(SQLException sqlex){
@@ -65,9 +72,17 @@ import java.util.List;
 
         try {
 
+            if(r.getAdres() != null){
+                Adres adres = adao.findByReiziger(r);
+                adao.delete(adres);
+            }
+
             PreparedStatement st = conn.prepareStatement("DELETE FROM reiziger WHERE reiziger_id=?");
             st.setInt(1, r.getId());
             st.executeUpdate();
+
+
+
             return true;
 
         } catch(SQLException sqlex){
@@ -97,6 +112,8 @@ import java.util.List;
                 Date Gd = rs.getDate("geboortedatum");
 
                 reiziger = new Reiziger(Rid, Vl, Tv, An, Gd);
+                Adres adres = adao.findByReiziger(reiziger);
+                reiziger.addAdres(adres);
 
             }
 
@@ -129,6 +146,10 @@ import java.util.List;
                 Date Gd = rs.getDate("geboortedatum");
 
                 Reiziger reiziger = new Reiziger(Rid, Vl, Tv, An, Gd);
+
+                Adres adres = adao.findByReiziger(reiziger);
+                reiziger.addAdres(adres);
+
                 reizigerLijst.add(reiziger);
 
             }
@@ -157,7 +178,10 @@ import java.util.List;
                 String Tv = rs.getString("tussenvoegsel");
                 String An = rs.getString("achternaam");
                 Date Gd = rs.getDate("geboortedatum");
+
                 Reiziger reiziger = new Reiziger(id, Vl, Tv, An, Gd);
+                Adres adres = adao.findByReiziger(reiziger);
+                reiziger.addAdres(adres);
                 reizigerLijst.add(reiziger);
             }
 

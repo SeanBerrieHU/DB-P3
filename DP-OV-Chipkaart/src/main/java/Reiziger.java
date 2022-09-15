@@ -8,7 +8,7 @@ public class Reiziger {
     private String tussenvoegsel;
     private String achternaam;
     private Date geboortedatum;
-    private List<Adres> adressen;
+    private Adres adres;
 
     public Reiziger(int Rid, String Vl, String Tv, String An, Date Gd){
         this.reiziger_id = Rid;
@@ -26,8 +26,12 @@ public class Reiziger {
         this.reiziger_id = id;
     }
 
+    public Adres getAdres(){
+        return this.adres;
+    }
+
     public void addAdres(Adres adres){
-        this.adressen.add(adres);
+        this.adres = adres;
     }
 
     public String getVoorletters(){
@@ -51,7 +55,13 @@ public class Reiziger {
     }
 
     public String toString(){
-        return "Reiziger id: " + this.reiziger_id + ", Naam: " + getNaam() + ", Geboortedatum: " + this.geboortedatum + ".";
+
+        String adresString = "{ Geen adres beschikbaar }";
+        if(this.adres != null){
+            adresString = this.adres.toString();
+        }
+
+        return "Reiziger {#" + this.reiziger_id + " " + getNaam() + " " + this.geboortedatum + "." + adresString;
     }
 
 }

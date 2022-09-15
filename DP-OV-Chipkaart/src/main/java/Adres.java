@@ -4,15 +4,15 @@ public class Adres {
     private String huisnummer;
     private String straat;
     private String woonplaats;
-    private int reizigerId;
+    private Reiziger reiziger;
 
-    public Adres(int id, String Pc, String Hn, String Str, String Wp, int Rid){
+    public Adres(int id, String Pc, String Hn, String Str, String Wp, Reiziger Rid){
         this.id = id;
         this.postcode = Pc;
         this.huisnummer = Hn;
         this.straat = Str;
         this.woonplaats = Wp;
-        this.reizigerId = Rid;
+        this.reiziger = Rid;
     }
 
 
@@ -41,13 +41,12 @@ public class Adres {
         return woonplaats;
     }
 
-    public int getReizigerId() {
-        return reizigerId;
+    public Reiziger getReiziger() {
+        return reiziger;
     }
-
 
     @Override
     public String toString(){
-        return "Id: " + this.id + ", Postcode: " + this.postcode + ", Huisnummer: " + this.huisnummer + ", Straat: " + this.straat + ", Woonplaats: " + this.woonplaats + ", Reiziger_id: " + this.reizigerId;
+        return "Adres {#" + this.id + " " + this.postcode + " " + this.huisnummer + " " + this.straat + " " + this.woonplaats + "}";
     }
 }

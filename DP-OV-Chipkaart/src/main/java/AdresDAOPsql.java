@@ -28,8 +28,9 @@ public class AdresDAOPsql implements AdresDAO {
             st.setString(3, adres.getHuisnummer());
             st.setString(4, adres.getStraat());
             st.setString(5, adres.getWoonplaats());
-            st.setInt(6, adres.getReizigerId());
+            st.setInt(6, adres.getReiziger().getId());
 
+            System.out.println(st);
             st.executeUpdate();
             return true;
 
@@ -45,17 +46,16 @@ public class AdresDAOPsql implements AdresDAO {
 
         try {
 
-            String query = "UPDATE adres SET adres_id=?, postcode=?, huisnummer=?, straat=?,woonplaats=?, reiziger_id=? WHERE adres_id=? AND reiziger_id=?";
+            String query = "UPDATE adres SET postcode=?, huisnummer=?, straat=?,woonplaats=?, reiziger_id=? WHERE adres_id=?";
             PreparedStatement st = conn.prepareStatement(query);
 
-            st.setInt(1, adres.getId());
-            st.setString(2, adres.getPostcode());
-            st.setString(3, adres.getHuisnummer());
-            st.setString(4, adres.getStraat());
-            st.setString(5, adres.getWoonplaats());
-            st.setInt(6, adres.getReizigerId());
-            st.setInt(7, adres.getId());
-            st.setInt(8, adres.getReizigerId());
+            st.setString(1, adres.getPostcode());
+            st.setString(2, adres.getHuisnummer());
+            st.setString(3, adres.getStraat());
+            st.setString(4, adres.getWoonplaats());
+            st.setInt(5, adres.getReiziger().getId());
+            st.setInt(6, adres.getId());
+            System.out.println(st);
 
             st.executeUpdate();
             return true;
@@ -73,8 +73,9 @@ public class AdresDAOPsql implements AdresDAO {
             String query = "DELETE FROM adres WHERE adres_id=? AND reiziger_id=?";
             PreparedStatement st = conn.prepareStatement(query);
 
+            System.out.println(adres);
             st.setInt(1, adres.getId());
-            st.setInt(2, adres.getReizigerId());
+            st.setInt(2, adres.getReiziger().getId());
             st.executeUpdate();
             return true;
 
@@ -95,40 +96,6 @@ public class AdresDAOPsql implements AdresDAO {
             st.setInt(1, reiziger.getId());
             ResultSet rs = st.executeQuery();
 
-            while (rs.next()){
-
-                int id = rs.getInt("adres_id");
-                String Pc = rs.getString("postcode");
-                String Hn = rs.getString("huisnummer");
-                String Str = rs.getString("straat");
-                String Wp = rs.getString("woonplaats");
-                int Rid = rs.getInt("reiziger_id");
-                Adres adr = new Adres(id,Pc,Hn,Str,Wp,Rid);
-                return adr;
-
-            }
-
-            return null;
-
-        } catch(SQLException sqlex){
-            System.err.println("Reiziger niet gevonden met id: " + sqlex);
-            return null;
-        }
-    }
-
-
-    @Override
-    public Adres findById(int adresId) {
-
-        try {
-
-            String query = "SELECT * FROM adres WHERE adres_id=?";
-            PreparedStatement st = conn.prepareStatement(query);
-
-            st.setInt(1, adresId);
-            ResultSet rs = st.executeQuery();
-
-
             Adres adres = null;
 
             while (rs.next()){
@@ -137,18 +104,19 @@ public class AdresDAOPsql implements AdresDAO {
                 String Hn = rs.getString("huisnummer");
                 String Str = rs.getString("straat");
                 String Wp = rs.getString("woonplaats");
-                int Rid = rs.getInt("reiziger_id");
 
-                adres = new Adres(id,Pc,Hn,Str,Wp,Rid);
+
+                adres = new Adres(id,Pc,Hn,Str,Wp,reiziger);
             }
 
             return adres;
 
         } catch(SQLException sqlex){
-            System.err.println("Adres niet gevonden met id: " + sqlex);
+            System.err.println("Reiziger niet gevonden met id: " + sqlex);
             return null;
         }
     }
+
 
     @Override
     public List<Adres> findAll() {
@@ -166,7 +134,7 @@ public class AdresDAOPsql implements AdresDAO {
                 String Str = rs.getString("straat");
                 String Wp = rs.getString("woonplaats");
                 int Rid = rs.getInt("reiziger_id");
-                Adres adres = new Adres(id, Pc, Hn, Str, Wp, Rid);
+                Adres adres = new Adres(id, Pc, Hn, Str, Wp, rdao.findById(Rid));
                 adressen.add(adres);
             }
 
