@@ -35,14 +35,16 @@ import java.util.List;
             st.setString(4, r.getAchternaam());
             st.setDate(5, r.getGeboorteDatum());
             st.executeUpdate();
+            st.close();
 
-            Adres adres = adao.findByReiziger(r);
-            r.addAdres(adres);
+            if(r.getAdres() != null){
+                adao.save(r.getAdres());
+            }
 
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Reiziger data niet successvol opgeslagen: " + sqlex);
+            System.err.println("Reiziger data niet successvol opgeslagen: " + sqlex);
             return false;
         }
 
@@ -61,14 +63,16 @@ import java.util.List;
             st.setDate(5, r.getGeboorteDatum());
             st.setInt(6, r.getId());
             st.executeUpdate();
+            st.close();
 
-            Adres adres = adao.findByReiziger(r);
-            r.addAdres(adres);
+            if(r.getAdres() != null){
+                adao.save(r.getAdres());
+            }
 
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Reiziger data niet successvol geupdate: " + sqlex);
+            System.err.println("Reiziger data niet successvol geupdate: " + sqlex);
             return false;
         }
 
@@ -80,20 +84,18 @@ import java.util.List;
         try {
 
             if(r.getAdres() != null){
-                Adres adres = adao.findByReiziger(r);
-                adao.delete(adres);
+                adao.delete(r.getAdres());
             }
 
             PreparedStatement st = conn.prepareStatement("DELETE FROM reiziger WHERE reiziger_id=?");
             st.setInt(1, r.getId());
             st.executeUpdate();
-
-
+            st.close();
 
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Reiziger data niet successvol verwijderd: " + sqlex);
+            System.err.println("Reiziger data niet successvol verwijderd: " + sqlex);
             return false;
         }
 
@@ -109,6 +111,7 @@ import java.util.List;
             String query = "SELECT * FROM reiziger WHERE reiziger_id=" + id;
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(query);
+            st.close();
 
             while (rs.next()) {
 
@@ -143,6 +146,7 @@ import java.util.List;
             String query = "SELECT * FROM reiziger WHERE geboortedatum=" + "\'" + java.sql.Date.valueOf(datum) + "\'";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(query);
+            st.close();
 
             while (rs.next()){
 
@@ -178,6 +182,7 @@ import java.util.List;
         try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM reiziger");
+            st.close();
 
             while (rs.next()){
                 int id = rs.getInt("reiziger_id");

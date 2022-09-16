@@ -37,8 +37,9 @@ public class AdresDAOPsql implements AdresDAO {
             st.setString(5, adres.getWoonplaats());
             st.setInt(6, adres.getReiziger().getId());
 
-            System.out.println(st);
             st.executeUpdate();
+            st.close();
+
             return true;
 
         } catch(SQLException sqlex){
@@ -62,13 +63,14 @@ public class AdresDAOPsql implements AdresDAO {
             st.setString(4, adres.getWoonplaats());
             st.setInt(5, adres.getReiziger().getId());
             st.setInt(6, adres.getId());
-            System.out.println(st);
 
             st.executeUpdate();
+            st.close();
+
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Adres niet geupdate: " + sqlex);
+            System.err.println("Adres niet geupdate: " + sqlex);
             return false;
         }
     }
@@ -77,6 +79,8 @@ public class AdresDAOPsql implements AdresDAO {
     public boolean delete(Adres adres) {
         try {
 
+            // close all statmenets
+
             String query = "DELETE FROM adres WHERE adres_id=? AND reiziger_id=?";
             PreparedStatement st = conn.prepareStatement(query);
 
@@ -84,10 +88,12 @@ public class AdresDAOPsql implements AdresDAO {
             st.setInt(1, adres.getId());
             st.setInt(2, adres.getReiziger().getId());
             st.executeUpdate();
+            st.close();
+
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Adres data niet successvol verwijderd: " + sqlex);
+            System.err.println("Adres data niet successvol verwijderd: " + sqlex);
             return false;
         }
     }
@@ -99,9 +105,9 @@ public class AdresDAOPsql implements AdresDAO {
 
             String query = "SELECT * FROM adres WHERE reiziger_id=?";
             PreparedStatement st = conn.prepareStatement(query);
-
             st.setInt(1, reiziger.getId());
             ResultSet rs = st.executeQuery();
+            st.close();
 
             Adres adres = null;
 
@@ -111,15 +117,13 @@ public class AdresDAOPsql implements AdresDAO {
                 String Hn = rs.getString("huisnummer");
                 String Str = rs.getString("straat");
                 String Wp = rs.getString("woonplaats");
-
-
                 adres = new Adres(id,Pc,Hn,Str,Wp,reiziger);
             }
 
             return adres;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Reiziger niet gevonden met id: " + sqlex);
+            System.err.println("Reiziger niet gevonden met id: " + sqlex);
             return null;
         }
     }
@@ -128,11 +132,12 @@ public class AdresDAOPsql implements AdresDAO {
     @Override
     public List<Adres> findAll() {
 
-        List<Adres> adressen = new ArrayList<>();
-
         try {
+
+            List<Adres> adressen = new ArrayList<>();
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM adres");
+            st.close();
 
             while (rs.next()) {
                 int id = rs.getInt("adres_id");
