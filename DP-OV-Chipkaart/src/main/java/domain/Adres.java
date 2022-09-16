@@ -1,3 +1,5 @@
+package domain;
+
 public class Adres {
     private int id;
     private String postcode;
@@ -47,6 +49,6 @@ public class Adres {
 
     @Override
     public String toString(){
-        return "Adres {#" + this.id + " " + this.postcode + " " + this.huisnummer + " " + this.straat + " " + this.woonplaats + "}";
+        return "domain.Adres {#" + this.id + " " + this.postcode + " " + this.huisnummer + " " + this.straat + " " + this.woonplaats + "}";
     }
 }

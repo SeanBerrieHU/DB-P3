@@ -1,3 +1,8 @@
+package application;
+
+import domain.Adres;
+import domain.Reiziger;
+
 import java.sql.*;
 import java.util.List;
 

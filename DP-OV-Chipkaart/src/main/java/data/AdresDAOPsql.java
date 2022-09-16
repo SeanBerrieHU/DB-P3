@@ -1,3 +1,10 @@
+package data;
+
+import application.AdresDAO;
+import application.ReizigerDAO;
+import domain.Adres;
+import domain.Reiziger;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +42,7 @@ public class AdresDAOPsql implements AdresDAO {
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("Adres niet opgeslagen: " + sqlex);
+            System.err.println("domain.Adres niet opgeslagen: " + sqlex);
             return false;
         }
 
@@ -61,7 +68,7 @@ public class AdresDAOPsql implements AdresDAO {
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("Adres niet geupdate: " + sqlex);
+            System.err.println("domain.Adres niet geupdate: " + sqlex);
             return false;
         }
     }
@@ -80,7 +87,7 @@ public class AdresDAOPsql implements AdresDAO {
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("Adres data niet successvol verwijderd: " + sqlex);
+            System.err.println("domain.Adres data niet successvol verwijderd: " + sqlex);
             return false;
         }
     }
@@ -112,7 +119,7 @@ public class AdresDAOPsql implements AdresDAO {
             return adres;
 
         } catch(SQLException sqlex){
-            System.err.println("Reiziger niet gevonden met id: " + sqlex);
+            System.err.println("domain.Reiziger niet gevonden met id: " + sqlex);
             return null;
         }
     }

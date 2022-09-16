@@ -1,5 +1,8 @@
+package domain;
+
+import domain.Adres;
+
 import java.sql.Date;
-import java.util.List;
 
 public class Reiziger {
 
@@ -61,7 +64,7 @@ public class Reiziger {
             adresString = this.adres.toString();
         }
 
-        return "Reiziger {#" + this.reiziger_id + " " + getNaam() + " " + this.geboortedatum + "." + adresString;
+        return "domain.Reiziger {#" + this.reiziger_id + " " + getNaam() + " " + this.geboortedatum + "." + adresString;
     }
 
 }

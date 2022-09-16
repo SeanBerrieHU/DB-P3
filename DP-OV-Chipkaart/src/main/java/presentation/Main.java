@@ -1,3 +1,12 @@
+package presentation;
+
+import application.AdresDAO;
+import application.ReizigerDAO;
+import data.AdresDAOPsql;
+import data.ReizigerDAOPsql;
+import domain.Adres;
+import domain.Reiziger;
+
 import java.sql.*;
 import java.util.List;
 
@@ -36,7 +45,7 @@ public class Main {
             testAdresDAO(adao, rdao);
 
         } catch (SQLException sqlex){
-            System.err.println("Reiziger informatie kan niet worden opgehaald: " + sqlex.getMessage());
+            System.err.println("domain.Reiziger informatie kan niet worden opgehaald: " + sqlex.getMessage());
         }
 
     }
@@ -56,11 +65,11 @@ public class Main {
     private static void testReizigerDAO(ReizigerDAO rdao) throws SQLException {
 
 
-        System.out.println("\n---------- Test ReizigerDAO -------------");
+        System.out.println("\n---------- Test application.ReizigerDAO -------------");
 
         // Haal alle reizigers op uit de database
         List<Reiziger> reizigers = rdao.findAll();
-        System.out.println("[Test] ReizigerDAO.findAll() geeft de volgende reizigers:");
+        System.out.println("[Test] application.ReizigerDAO.findAll() geeft de volgende reizigers:");
         for (Reiziger r : reizigers) {
             System.out.println(r);
         }
@@ -68,7 +77,7 @@ public class Main {
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
-        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
+        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na application.ReizigerDAO.save() ");
         rdao.save(sietske);
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
@@ -100,7 +109,7 @@ public class Main {
 
     private static void testAdresDAO(AdresDAO adao, ReizigerDAO rdao) throws SQLException {
 
-        System.out.println("------------------ TEST AdresDAO ---------------");
+        System.out.println("------------------ TEST application.AdresDAO ---------------");
 
 
         String gbdatumUpdate = "2002-03-14";

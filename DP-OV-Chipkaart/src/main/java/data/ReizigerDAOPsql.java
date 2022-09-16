@@ -1,3 +1,10 @@
+package data;
+
+import application.AdresDAO;
+import application.ReizigerDAO;
+import domain.Adres;
+import domain.Reiziger;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +42,7 @@ import java.util.List;
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("Reiziger data niet successvol opgeslagen: " + sqlex);
+            System.err.println("domain.Reiziger data niet successvol opgeslagen: " + sqlex);
             return false;
         }
 
@@ -61,7 +68,7 @@ import java.util.List;
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("Reiziger data niet successvol geupdate: " + sqlex);
+            System.err.println("domain.Reiziger data niet successvol geupdate: " + sqlex);
             return false;
         }
 
@@ -86,7 +93,7 @@ import java.util.List;
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("Reiziger data niet successvol verwijderd: " + sqlex);
+            System.err.println("domain.Reiziger data niet successvol verwijderd: " + sqlex);
             return false;
         }
 
@@ -120,7 +127,7 @@ import java.util.List;
             return reiziger;
 
         } catch(SQLException sqlex){
-            System.err.println("Reiziger niet gevonden met ID: " + sqlex);
+            System.err.println("domain.Reiziger niet gevonden met ID: " + sqlex);
             return null;
         }
     }
@@ -157,7 +164,7 @@ import java.util.List;
             return reizigerLijst;
 
         } catch(SQLException sqlex){
-            System.err.println("Reiziger niet gevonden met datum: " + sqlex);
+            System.err.println("domain.Reiziger niet gevonden met datum: " + sqlex);
             return null;
         }
 
@@ -188,7 +195,7 @@ import java.util.List;
             return reizigerLijst;
 
         } catch(SQLException sqlex){
-            System.err.println("Reiziger niet gevonden met ID: " + sqlex);
+            System.err.println("domain.Reiziger niet gevonden met ID: " + sqlex);
             return null;
         }
 
