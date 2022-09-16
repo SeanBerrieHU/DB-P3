@@ -35,12 +35,12 @@ import java.util.List;
             st.setString(4, r.getAchternaam());
             st.setDate(5, r.getGeboorteDatum());
             st.executeUpdate();
-            st.close();
 
             if(r.getAdres() != null){
                 adao.save(r.getAdres());
             }
 
+            st.close();
             return true;
 
         } catch(SQLException sqlex){
@@ -63,12 +63,12 @@ import java.util.List;
             st.setDate(5, r.getGeboorteDatum());
             st.setInt(6, r.getId());
             st.executeUpdate();
-            st.close();
 
             if(r.getAdres() != null){
                 adao.save(r.getAdres());
             }
 
+            st.close();
             return true;
 
         } catch(SQLException sqlex){
@@ -111,7 +111,7 @@ import java.util.List;
             String query = "SELECT * FROM reiziger WHERE reiziger_id=" + id;
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(query);
-            st.close();
+
 
             while (rs.next()) {
 
@@ -127,6 +127,7 @@ import java.util.List;
 
             }
 
+            st.close();
             return reiziger;
 
         } catch(SQLException sqlex){
@@ -146,7 +147,6 @@ import java.util.List;
             String query = "SELECT * FROM reiziger WHERE geboortedatum=" + "\'" + java.sql.Date.valueOf(datum) + "\'";
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(query);
-            st.close();
 
             while (rs.next()){
 
@@ -165,6 +165,7 @@ import java.util.List;
 
             }
 
+            st.close();
             return reizigerLijst;
 
         } catch(SQLException sqlex){
@@ -182,7 +183,7 @@ import java.util.List;
         try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM reiziger");
-            st.close();
+
 
             while (rs.next()){
                 int id = rs.getInt("reiziger_id");
@@ -197,6 +198,7 @@ import java.util.List;
                 reizigerLijst.add(reiziger);
             }
 
+            st.close();
             return reizigerLijst;
 
         } catch(SQLException sqlex){

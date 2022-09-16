@@ -107,7 +107,6 @@ public class AdresDAOPsql implements AdresDAO {
             PreparedStatement st = conn.prepareStatement(query);
             st.setInt(1, reiziger.getId());
             ResultSet rs = st.executeQuery();
-            st.close();
 
             Adres adres = null;
 
@@ -120,6 +119,7 @@ public class AdresDAOPsql implements AdresDAO {
                 adres = new Adres(id,Pc,Hn,Str,Wp,reiziger);
             }
 
+            st.close();
             return adres;
 
         } catch(SQLException sqlex){
@@ -137,7 +137,6 @@ public class AdresDAOPsql implements AdresDAO {
             List<Adres> adressen = new ArrayList<>();
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM adres");
-            st.close();
 
             while (rs.next()) {
                 int id = rs.getInt("adres_id");
@@ -150,6 +149,7 @@ public class AdresDAOPsql implements AdresDAO {
                 adressen.add(adres);
             }
 
+            st.close();
             return adressen;
 
         } catch (SQLException sqlex) {
