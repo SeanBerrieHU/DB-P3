@@ -17,4 +17,28 @@ public class OVChipkaart {
         this.saldo = Sd;
         this.reizigerId = Rid;
     }
+
+    public int getKaartNummer() {
+        return kaartNummer;
+    }
+
+    public Date getGeldigTot() {
+        return geldigTot;
+    }
+
+    public int getKlasse() {
+        return klasse;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public int getReizigerId() {
+        return reizigerId;
+    }
+
+    public String toString(){
+        return "{ #" +  kaartNummer + ", " +geldigTot + ", " + klasse + ", €" + saldo + " #" + reizigerId + "}";
+    }
 }

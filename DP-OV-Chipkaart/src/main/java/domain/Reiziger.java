@@ -3,6 +3,7 @@ package domain;
 import domain.Adres;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Reiziger {
@@ -21,6 +22,7 @@ public class Reiziger {
         this.tussenvoegsel = Tv;
         this.achternaam = An;
         this.geboortedatum = Gd;
+        this.OVChipkaarten = new ArrayList<>();
     }
 
     public int getId(){
@@ -29,14 +31,6 @@ public class Reiziger {
 
     public void setId(int id){
         this.reiziger_id = id;
-    }
-
-    public Adres getAdres(){
-        return this.adres;
-    }
-
-    public void addAdres(Adres adres){
-        this.adres = adres;
     }
 
     public String getVoorletters(){
@@ -55,6 +49,25 @@ public class Reiziger {
         return this.geboortedatum;
     }
 
+    public Adres getAdres(){
+        return this.adres;
+    }
+
+    public void addAdres(Adres adres){
+        this.adres = adres;
+    }
+
+    public List<OVChipkaart> getOVChipkaarten(){
+        return this.OVChipkaarten;
+    }
+    public void addOVChipkaart(OVChipkaart ovChipkaart){
+        OVChipkaarten.add(ovChipkaart);
+    }
+
+    public void removeOVChipkaarten(){
+        OVChipkaarten.clear();
+    }
+
     public String getNaam(){
         return this.voorletters + ". " + this.tussenvoegsel + " " + this.achternaam;
     }
@@ -66,7 +79,7 @@ public class Reiziger {
             adresString = this.adres.toString();
         }
 
-        return "domain.Reiziger {#" + this.reiziger_id + " " + getNaam() + " " + this.geboortedatum + "." + adresString;
+        return "Reiziger {#" + this.reiziger_id + " " + getNaam() + " " + this.geboortedatum + "." + adresString + OVChipkaarten.toString();
     }
 
 }

@@ -1,10 +1,13 @@
 package presentation;
 
 import application.AdresDAO;
+import application.OVChipkaartDAO;
 import application.ReizigerDAO;
 import data.AdresDAOPsql;
+import data.OVChipkaartDAOPsql;
 import data.ReizigerDAOPsql;
 import domain.Adres;
+import domain.OVChipkaart;
 import domain.Reiziger;
 
 import java.sql.*;
@@ -37,12 +40,16 @@ public class Main {
 
             ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
             AdresDAOPsql adao = new AdresDAOPsql(connection);
+            OVChipkaartDAOPsql ovdao = new OVChipkaartDAOPsql(connection);
 
             rdao.setAdao(adao);
+            rdao.setOvdao(ovdao);
             adao.setRdao(rdao);
+            ovdao.setRdao(rdao);
 
             testReizigerDAO(rdao);
             testAdresDAO(adao, rdao);
+            testOVKaartDAO(ovdao,rdao);
 
         } catch (SQLException sqlex){
             System.err.println("domain.Reiziger informatie kan niet worden opgehaald: " + sqlex.getMessage());
@@ -118,7 +125,7 @@ public class Main {
         // bewerk
         rdao.save(reiziger);
 
-        Adres adres_1 = new Adres(100,"6367BB", "20", "Hogeweg", "Voerendaal", reiziger);
+        Adres adres_1 = new Adres(100, "6367BB", "20", "Hogeweg", "Voerendaal", reiziger);
 
         reiziger.addAdres(adres_1);
 
@@ -134,7 +141,7 @@ public class Main {
 
 
         System.out.println("------------------ TEST Update  ---------------");
-        Adres adres_1_update = new Adres(100,"3553EW", "29", "Sybrantshof", "Utrecht", reiziger);
+        Adres adres_1_update = new Adres(100, "3553EW", "29", "Sybrantshof", "Utrecht", reiziger);
         boolean response_update = adao.update(adres_1_update);
         System.out.println("Update successfull: " + response_update);
 
@@ -145,16 +152,52 @@ public class Main {
 
 
         List<Adres> alleAdressen = adao.findAll();
-        for(Adres a: alleAdressen){
+        for (Adres a : alleAdressen) {
             System.out.println(a.toString());
         }
 
         List<Reiziger> alleReizigers = rdao.findAll();
-        for(Reiziger r: alleReizigers){
+        for (Reiziger r : alleReizigers) {
             System.out.println(r.toString());
         }
+    }
 
+    private static void testOVKaartDAO(OVChipkaartDAO ovdao, ReizigerDAO rdao) throws SQLException {
 
+        Reiziger reiziger = new Reiziger(200, "P", "van", "Willemsen", java.sql.Date.valueOf("2025-01-25"));
+        rdao.save(reiziger);
+
+        System.out.println("------------------ TEST Save OVCHIPKAART ---------------");
+        OVChipkaart nieuweOVChipkaart = new OVChipkaart(1234567890, java.sql.Date.valueOf("2030-01-15"), 1, 30.25, 200);
+        boolean save = ovdao.save(nieuweOVChipkaart);
+        OVChipkaart nieuweOVChipkaart2 = new OVChipkaart(100000000, java.sql.Date.valueOf("2030-12-15"), 2, 12, 200);
+        OVChipkaart nieuweOVChipkaart3 = new OVChipkaart(200000000, java.sql.Date.valueOf("2022-07-30"), 1, 950, 200);
+        OVChipkaart nieuweOVChipkaart4 = new OVChipkaart(300000000, java.sql.Date.valueOf("2030-05-12"), 1, 0, 200);
+        boolean save2 = ovdao.save(nieuweOVChipkaart2);
+        boolean save3 = ovdao.save(nieuweOVChipkaart3);
+        boolean save4 = ovdao.save(nieuweOVChipkaart4);
+
+        System.out.println("OV-Kaart successvol opgeslagen: " + save);
+        System.out.println("OV-Kaart successvol opgeslagen: " + save2);
+
+        System.out.println("------------------ TEST Update OVCHIPKAART  ---------------");
+        OVChipkaart nieuweOVChipkaart_update = new OVChipkaart(1234567890, java.sql.Date.valueOf("2025-01-25"), 2, 50, 200);
+        boolean update = ovdao.update(nieuweOVChipkaart_update);
+        System.out.println("OV-Kaart successvol geupdate: " + update);
+
+        System.out.println("------------------ TEST Delete OVCHIPKAART  ---------------");
+        boolean delete = ovdao.delete(nieuweOVChipkaart_update);
+        System.out.println("OV-Kaart successvol verwijderd: " + delete);
+
+        System.out.println("------------------ TEST FindByReiziger ---------------");
+
+        List<OVChipkaart> kaarten = ovdao.findByReiziger(reiziger);
+        for(OVChipkaart ovkaart: kaarten){
+            System.out.println(ovkaart);
+        }
+
+        rdao.update(reiziger);
+        System.out.println(reiziger);
 
     }
 

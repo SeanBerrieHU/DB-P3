@@ -1,8 +1,10 @@
 package data;
 
 import application.AdresDAO;
+import application.OVChipkaartDAO;
 import application.ReizigerDAO;
 import domain.Adres;
+import domain.OVChipkaart;
 import domain.Reiziger;
 
 import java.sql.*;
@@ -14,6 +16,7 @@ import java.util.List;
 
     private Connection conn;
     private AdresDAO adao;
+    private OVChipkaartDAO ovdao;
 
     public ReizigerDAOPsql(Connection conn){
         this.conn = conn;
@@ -22,6 +25,10 @@ import java.util.List;
     public void setAdao(AdresDAO adao){
         this.adao = adao;
     }
+
+     public void setOvdao(OVChipkaartDAO ovdao){
+         this.ovdao = ovdao;
+     }
 
     @Override
     public boolean save(Reiziger r) throws SQLException {
@@ -40,6 +47,14 @@ import java.util.List;
                 adao.save(r.getAdres());
             }
 
+            List<OVChipkaart> OVChipkaarten =  ovdao.findByReiziger(r);
+            if(OVChipkaarten != null){
+                r.removeOVChipkaarten();
+                for(OVChipkaart ovChipkaart: OVChipkaarten){
+                    r.addOVChipkaart(ovChipkaart);
+                }
+            }
+
             st.close();
             return true;
 
@@ -55,7 +70,8 @@ import java.util.List;
 
         try {
 
-            PreparedStatement st = conn.prepareStatement("UPDATE reiziger SET reiziger_id=?, voorletters=?, tussenvoegsel=?, achternaam=?,geboortedatum=? WHERE reiziger_id=?");
+            String query = "UPDATE reiziger SET reiziger_id=?, voorletters=?, tussenvoegsel=?, achternaam=?,geboortedatum=? WHERE reiziger_id=?";
+            PreparedStatement st = conn.prepareStatement(query);
             st.setInt(1, r.getId());
             st.setString(2, r.getVoorletters());
             st.setString(3, r.getTussenvoegsel());
@@ -66,6 +82,14 @@ import java.util.List;
 
             if(r.getAdres() != null){
                 adao.save(r.getAdres());
+            }
+
+            List<OVChipkaart> OVChipkaarten =  ovdao.findByReiziger(r);
+            if(OVChipkaarten != null){
+                r.removeOVChipkaarten();
+                for(OVChipkaart ovChipkaart: OVChipkaarten){
+                    r.addOVChipkaart(ovChipkaart);
+                }
             }
 
             st.close();
@@ -87,10 +111,20 @@ import java.util.List;
                 adao.delete(r.getAdres());
             }
 
-            PreparedStatement st = conn.prepareStatement("DELETE FROM reiziger WHERE reiziger_id=?");
+            List<OVChipkaart> OVChipkaarten =  ovdao.findByReiziger(r);
+            if(OVChipkaarten != null){
+                for(OVChipkaart ovChipkaart: OVChipkaarten){
+                    ovdao.delete(ovChipkaart);
+                }
+            }
+
+            String query = "DELETE FROM reiziger WHERE reiziger_id=?";
+            PreparedStatement st = conn.prepareStatement(query);
             st.setInt(1, r.getId());
             st.executeUpdate();
             st.close();
+
+
 
             return true;
 
