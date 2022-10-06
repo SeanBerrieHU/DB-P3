@@ -60,13 +60,13 @@ public class Reiziger {
     public List<OVChipkaart> getOVChipkaarten(){
         return this.OVChipkaarten;
     }
+
     public void addOVChipkaart(OVChipkaart ovChipkaart){
-        OVChipkaarten.add(ovChipkaart);
+        if(!OVChipkaarten.contains(ovChipkaart)){
+            OVChipkaarten.add(ovChipkaart);
+        }
     }
 
-    public void removeOVChipkaarten(){
-        OVChipkaarten.clear();
-    }
 
     public String getNaam(){
         return this.voorletters + ". " + this.tussenvoegsel + " " + this.achternaam;

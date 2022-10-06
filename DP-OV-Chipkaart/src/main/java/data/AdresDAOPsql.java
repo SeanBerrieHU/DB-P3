@@ -43,7 +43,7 @@ public class AdresDAOPsql implements AdresDAO {
             return true;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Adres niet opgeslagen: " + sqlex);
+            System.err.println("Adres niet opgeslagen: " + sqlex);
             return false;
         }
 

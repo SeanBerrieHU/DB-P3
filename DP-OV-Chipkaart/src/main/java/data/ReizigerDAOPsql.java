@@ -47,13 +47,13 @@ import java.util.List;
                 adao.save(r.getAdres());
             }
 
-            List<OVChipkaart> OVChipkaarten =  ovdao.findByReiziger(r);
-            if(OVChipkaarten != null){
-                r.removeOVChipkaarten();
+            if(r.getOVChipkaarten() != null){
+                List<OVChipkaart> OVChipkaarten = r.getOVChipkaarten();
                 for(OVChipkaart ovChipkaart: OVChipkaarten){
-                    r.addOVChipkaart(ovChipkaart);
+                    ovdao.save(ovChipkaart);
                 }
             }
+
 
             st.close();
             return true;
@@ -70,6 +70,8 @@ import java.util.List;
 
         try {
 
+            System.out.println(r.getOVChipkaarten());
+
             String query = "UPDATE reiziger SET reiziger_id=?, voorletters=?, tussenvoegsel=?, achternaam=?,geboortedatum=? WHERE reiziger_id=?";
             PreparedStatement st = conn.prepareStatement(query);
             st.setInt(1, r.getId());
@@ -81,16 +83,25 @@ import java.util.List;
             st.executeUpdate();
 
             if(r.getAdres() != null){
-                adao.save(r.getAdres());
+                adao.update(r.getAdres());
             }
 
-            List<OVChipkaart> OVChipkaarten =  ovdao.findByReiziger(r);
-            if(OVChipkaarten != null){
-                r.removeOVChipkaarten();
+            if(r.getOVChipkaarten() != null){
+                List<OVChipkaart> OVChipkaarten = r.getOVChipkaarten();
                 for(OVChipkaart ovChipkaart: OVChipkaarten){
-                    r.addOVChipkaart(ovChipkaart);
+                    ovdao.update(ovChipkaart);
                 }
             }
+
+            System.out.println(r.getOVChipkaarten());
+
+           // List<OVChipkaart> OVChipkaarten =  ovdao.findByReiziger(r);
+           // if(OVChipkaarten != null){
+           //     r.removeOVChipkaarten();
+           //     for(OVChipkaart ovChipkaart: OVChipkaarten){
+           //         r.addOVChipkaart(ovChipkaart);
+           //     }
+           // }
 
             st.close();
             return true;
@@ -111,8 +122,8 @@ import java.util.List;
                 adao.delete(r.getAdres());
             }
 
-            List<OVChipkaart> OVChipkaarten =  ovdao.findByReiziger(r);
-            if(OVChipkaarten != null){
+            if(r.getOVChipkaarten() != null){
+                List<OVChipkaart> OVChipkaarten = r.getOVChipkaarten();
                 for(OVChipkaart ovChipkaart: OVChipkaarten){
                     ovdao.delete(ovChipkaart);
                 }
@@ -159,28 +170,33 @@ import java.util.List;
                 Adres adres = adao.findByReiziger(reiziger);
                 reiziger.addAdres(adres);
 
+                List<OVChipkaart> OVChipkaarten = ovdao.findById(reiziger.getId());
+                for(OVChipkaart ovChipkaart: OVChipkaarten){
+                    reiziger.addOVChipkaart(ovChipkaart);
+                }
+
             }
 
             st.close();
             return reiziger;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Reiziger niet gevonden met ID: " + sqlex);
+            System.err.println("Reiziger niet gevonden met ID: " + sqlex);
             return null;
         }
     }
 
     @Override
-    public List<Reiziger> findByGbDatum(String datum){
+    public List<Reiziger> findByGbDatum(Date gbdatum){
 
         List<Reiziger> reizigerLijst = new ArrayList<>();
 
         try {
 
-
-            String query = "SELECT * FROM reiziger WHERE geboortedatum=" + "\'" + java.sql.Date.valueOf(datum) + "\'";
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(query);
+            String query = "SELECT * FROM reiziger WHERE geboortedatum=?";
+            PreparedStatement st = conn.prepareStatement(query);
+            st.setDate(1, gbdatum);
+            ResultSet rs = st.executeQuery();
 
             while (rs.next()){
 
@@ -195,6 +211,11 @@ import java.util.List;
                 Adres adres = adao.findByReiziger(reiziger);
                 reiziger.addAdres(adres);
 
+                List<OVChipkaart> OVChipkaarten = ovdao.findById(reiziger.getId());
+                for(OVChipkaart ovChipkaart: OVChipkaarten){
+                    reiziger.addOVChipkaart(ovChipkaart);
+                }
+
                 reizigerLijst.add(reiziger);
 
             }
@@ -203,7 +224,7 @@ import java.util.List;
             return reizigerLijst;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Reiziger niet gevonden met datum: " + sqlex);
+            System.err.println("Reiziger niet gevonden met datum: " + sqlex);
             return null;
         }
 
@@ -229,6 +250,12 @@ import java.util.List;
                 Reiziger reiziger = new Reiziger(id, Vl, Tv, An, Gd);
                 Adres adres = adao.findByReiziger(reiziger);
                 reiziger.addAdres(adres);
+
+                List<OVChipkaart> OVChipkaarten = ovdao.findById(reiziger.getId());
+                for(OVChipkaart ovChipkaart: OVChipkaarten){
+                    reiziger.addOVChipkaart(ovChipkaart);
+                }
+
                 reizigerLijst.add(reiziger);
             }
 
@@ -236,7 +263,7 @@ import java.util.List;
             return reizigerLijst;
 
         } catch(SQLException sqlex){
-            System.err.println("domain.Reiziger niet gevonden met ID: " + sqlex);
+            System.err.println("Reiziger niet gevonden met ID: " + sqlex);
             return null;
         }
 

@@ -5,9 +5,11 @@ import application.OVChipkaartDAO;
 import application.ReizigerDAO;
 import data.AdresDAOPsql;
 import data.OVChipkaartDAOPsql;
+import data.ProductDAOPsql;
 import data.ReizigerDAOPsql;
 import domain.Adres;
 import domain.OVChipkaart;
+import domain.Product;
 import domain.Reiziger;
 
 import java.sql.*;
@@ -34,22 +36,28 @@ public class Main {
                 System.out.println("#" + rs.getString("reiziger_id") +" "+ rs.getString("voorletters") +". "+ rs.getString("tussenvoegsel") +" "+ rs.getString("achternaam") +" ("+ rs.getString("geboortedatum")+ ")");
             }
 
-           //rs.close();
-           //st.close();
-           //closeConnection();
+            //rs.close();
+            //st.close();
+            //closeConnection();
 
             ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
             AdresDAOPsql adao = new AdresDAOPsql(connection);
             OVChipkaartDAOPsql ovdao = new OVChipkaartDAOPsql(connection);
+            ProductDAOPsql pdao = new ProductDAOPsql(connection);
+
 
             rdao.setAdao(adao);
             rdao.setOvdao(ovdao);
             adao.setRdao(rdao);
             ovdao.setRdao(rdao);
 
-            testReizigerDAO(rdao);
-            testAdresDAO(adao, rdao);
-            testOVKaartDAO(ovdao,rdao);
+            pdao.setOvdao(ovdao);
+            ovdao.setPdao(pdao);
+
+            //testReizigerDAO(rdao);
+            // testAdresDAO(adao, rdao);
+            testOVKaartDAO(ovdao,rdao,pdao);
+            testProductDAO(pdao, ovdao);
 
         } catch (SQLException sqlex){
             System.err.println("domain.Reiziger informatie kan niet worden opgehaald: " + sqlex.getMessage());
@@ -81,6 +89,7 @@ public class Main {
             System.out.println(r);
         }
 
+        System.out.println("------------------ TEST Save reiziger ---------------");
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
@@ -89,28 +98,40 @@ public class Main {
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
+        System.out.println("------------------ TEST Update reiziger  ---------------");
         // Update informatie in de database van bestaande reiziger
         String gbdatumUpdate = "2002-03-14";
         Reiziger sietskeUpdate = new Reiziger(77, "B", "", "Willemsen", java.sql.Date.valueOf(gbdatumUpdate));
         boolean r1 = rdao.update(sietskeUpdate);
         System.out.print("[Test] Updating id 77, update voltooid: " + r1 + "\n");
 
+
+        System.out.println("------------------ TEST Delete reiziger  ---------------");
         // Verwijderd reiziger van de database
         boolean r2 = rdao.delete(sietskeUpdate);
         System.out.print("[Test] Deleting id 77, reiziger verwijderd: " + r2 + "\n");
 
 
+        System.out.println("------------------ TEST findby reiziger id  ---------------");
         // Vind reiziger met reiziger_id
         Reiziger r4 = rdao.findById(3);
         System.out.print("[Test] Zoek reiziger met reiziger_id nummer 3: \n");
         System.out.println(r4);
 
+        System.out.println("------------------ TEST findbygbdatum reizigers  ---------------");
         // Vind reiziger met geboortedatum
-        List<Reiziger> r3 = rdao.findByGbDatum("2002-10-22");
+        Date date = Date.valueOf("2002-10-22");
+        List<Reiziger> r3 = rdao.findByGbDatum(date);
         System.out.print("[Test] Zoek reiziger met geboortedatum 2002-10-22: \n");
         for(Reiziger reiziger: r3){
             System.out.println(reiziger);
         }
+
+
+        System.out.println("------------------ TEST Findall reizigers  ---------------");
+        System.out.println(rdao.findAll());
+
+
     }
 
 
@@ -162,7 +183,7 @@ public class Main {
         }
     }
 
-    private static void testOVKaartDAO(OVChipkaartDAO ovdao, ReizigerDAO rdao) throws SQLException {
+    private static void testOVKaartDAO(OVChipkaartDAOPsql ovdao, ReizigerDAO rdao, ProductDAOPsql pdao) throws SQLException {
 
         Reiziger reiziger = new Reiziger(200, "P", "van", "Willemsen", java.sql.Date.valueOf("2025-01-25"));
         rdao.save(reiziger);
@@ -189,15 +210,46 @@ public class Main {
         boolean delete = ovdao.delete(nieuweOVChipkaart_update);
         System.out.println("OV-Kaart successvol verwijderd: " + delete);
 
+
+
+        System.out.println("------------------ TEST FindbyGbdatum ---------------");
+
+        Date date = Date.valueOf("2002-10-22");
+        List<OVChipkaart> findbydatekaarten =  ovdao.findByGbdatum(date);
+        System.out.println(findbydatekaarten);
+
+
+
+
+        System.out.println("------------------ TEST FindByID ---------------");
+
+        List<OVChipkaart> findbyidKaarten =  ovdao.findById(2);
+        System.out.println(findbyidKaarten);
+
+
         System.out.println("------------------ TEST FindByReiziger ---------------");
 
         List<OVChipkaart> kaarten = ovdao.findByReiziger(reiziger);
-        for(OVChipkaart ovkaart: kaarten){
-            System.out.println(ovkaart);
-        }
 
         rdao.update(reiziger);
         System.out.println(reiziger);
+
+
+        System.out.println("------------------ TEST Findall ---------------");
+        System.out.println(ovdao.findAll());
+
+    }
+
+
+
+
+    private static void testProductDAO(ProductDAOPsql pdao, OVChipkaartDAOPsql ovdao) throws SQLException {
+
+
+        System.out.println("------------------ TEST Delete ---------------");
+        Product product = new Product(10,"Test product", "test", 10);
+        pdao.delete(product);
+
 
     }
 
