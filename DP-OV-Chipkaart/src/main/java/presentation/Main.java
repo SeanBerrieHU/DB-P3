@@ -56,7 +56,7 @@ public class Main {
 
             //testReizigerDAO(rdao);
             // testAdresDAO(adao, rdao);
-            testOVKaartDAO(ovdao,rdao,pdao);
+            //testOVKaartDAO(ovdao,rdao,pdao);
             testProductDAO(pdao, ovdao);
 
         } catch (SQLException sqlex){
@@ -246,9 +246,60 @@ public class Main {
     private static void testProductDAO(ProductDAOPsql pdao, OVChipkaartDAOPsql ovdao) throws SQLException {
 
 
-        System.out.println("------------------ TEST Delete ---------------");
+        OVChipkaart nieuweOVChipkaart = new OVChipkaart(1234567890, java.sql.Date.valueOf("2030-01-15"), 1, 30.25, 200);
+        OVChipkaart nieuweOVChipkaart2 = new OVChipkaart(100000000, java.sql.Date.valueOf("2030-12-15"), 2, 12, 200);
+        OVChipkaart nieuweOVChipkaart3 = new OVChipkaart(200000000, java.sql.Date.valueOf("2022-07-30"), 1, 950, 200);
+        OVChipkaart nieuweOVChipkaart4 = new OVChipkaart(300000000, java.sql.Date.valueOf("2030-05-12"), 1, 0, 200);
+
+        ovdao.delete(nieuweOVChipkaart);
+        ovdao.delete(nieuweOVChipkaart2);
+        ovdao.delete(nieuweOVChipkaart3);
+        ovdao.delete(nieuweOVChipkaart4);
+
         Product product = new Product(10,"Test product", "test", 10);
-        pdao.delete(product);
+        Product product2 = new Product(20,"Test product", "test", 10);
+
+        product.addOVChipkaart(nieuweOVChipkaart);
+        product2.addOVChipkaart(nieuweOVChipkaart);
+        product.addOVChipkaart(nieuweOVChipkaart2);
+        product.addOVChipkaart(nieuweOVChipkaart3);
+        product.addOVChipkaart(nieuweOVChipkaart4);
+
+        ovdao.save(nieuweOVChipkaart);
+        ovdao.save(nieuweOVChipkaart2);
+        ovdao.save(nieuweOVChipkaart3);
+        ovdao.save(nieuweOVChipkaart4);
+
+        System.out.println("------------------ TEST Save ---------------");
+        System.out.println("Save successfull: " + pdao.save(product));
+        pdao.save(product2);
+
+
+        System.out.println("------------------ TEST UPDATE ---------------");
+        System.out.println(product.getOVChipkaarten());
+        product.setPrijs(50);
+        product.setBeschrijving("Test update 12345");
+        System.out.println("Update successfull: " + pdao.update(product));
+
+        System.out.println("------------------ TEST FindByOV ---------------");
+        System.out.println("FindByOV successfull: " + pdao.findByOVChipkaart(nieuweOVChipkaart).toString());
+
+        System.out.println("------------------ TEST FindAll ---------------");
+        System.out.println("FindAll successfull: " + pdao.findAll().toString());
+
+
+
+        System.out.println("------------------ TEST Delete ---------------");
+        System.out.println("Delete successfull: " + pdao.delete(product));
+        pdao.delete(product2);
+
+
+
+
+
+
+
+
 
 
     }

@@ -138,6 +138,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         }
     }
 
+
     @Override
     public List<OVChipkaart> findByGbdatum(Date gbdatum) {
         try {
@@ -160,8 +161,13 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 int Rid = rs.getInt("reiziger_id");
 
                 OVChipkaart ovChipkaart = new OVChipkaart(kNr, Gt, Kl, Sd, Rid);
-                OVChipkaarten.add(ovChipkaart);
 
+                List<Product> productenLijst = pdao.findByOVChipkaart(ovChipkaart);
+                for(Product product: productenLijst){
+                    ovChipkaart.addOVProduct(product);
+                }
+
+                OVChipkaarten.add(ovChipkaart);
             }
 
             st.close();
@@ -193,8 +199,12 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 int Rid = rs.getInt("reiziger_id");
                 OVChipkaart ovChipkaart = new OVChipkaart(kNr, Gt, Kl, Sd, Rid);
 
+                List<Product> productenLijst = pdao.findByOVChipkaart(ovChipkaart);
+                for(Product product: productenLijst){
+                    ovChipkaart.addOVProduct(product);
+                }
+
                 OVChipkaarten.add(ovChipkaart);
-                reiziger.addOVChipkaart(ovChipkaart);
             }
 
             st.close();
@@ -211,7 +221,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     @Override
     public List<OVChipkaart> findAll() {
 
-        List<OVChipkaart> OVChipkaartList = new ArrayList<>();
+        List<OVChipkaart> OVChipkaarten = new ArrayList<>();
 
         try {
 
@@ -226,47 +236,19 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 double Sd = rs.getDouble("saldo");
                 int Rid = rs.getInt("reiziger_id");
 
-                OVChipkaart OVChipkaart = new OVChipkaart(Kn, Gt, Kl, Sd, Rid);
-                OVChipkaartList.add(OVChipkaart);
+                OVChipkaart ovChipkaart = new OVChipkaart(Kn, Gt, Kl, Sd, Rid);
 
-                // Adds ov_chipkaart to reiziger
-                Reiziger reiziger = rdao.findById(OVChipkaart.getReizigerId());
-                reiziger.addOVChipkaart(OVChipkaart);
+                List<Product> productenLijst = pdao.findByOVChipkaart(ovChipkaart);
+                for(Product product: productenLijst){
+                    ovChipkaart.addOVProduct(product);
+                }
+
+                OVChipkaarten.add(ovChipkaart);
 
             }
             st.close();
 
-           // // GETS ALL PRODUCTS WITH OV-CHIPKAART BESIDES IT
-           // Statement st2 = conn.createStatement();
-           // ResultSet rs2 = st2.executeQuery("SELECT ov.kaart_nummer, p.* FROM ov_chipkaart ov\n" +
-           //         "\tINNER JOIN ov_chipkaart_product ovp\n" +
-           //         "\tON ov.kaart_nummer = ovp.kaart_nummer\n" +
-           //         "\tINNER JOIN product p\n" +
-           //         "\tON ovp.product_nummer = p.product_nummer;");
-//
-           // while (rs2.next()) {
-//
-           //     int Kn = rs2.getInt("kaart_nummer");
-           //     int Pn = rs2.getInt("product_nummer");
-           //     String Nm = rs2.getString("naam");
-           //     String Bs = rs2.getString("beschrijving");
-           //     double Pr = rs2.getDouble("prijs");
-           //     Product product = new Product(Pn,Nm,Bs,Pr);
-//
-           //     for(OVChipkaart ovChipkaart: OVChipkaartList){
-           //         if(ovChipkaart.getKaartNummer() == Kn){
-           //             // Adds ov_chipkaart with product to ov_chipkaart_product
-           //             OVChipkaartProduct ovp = new OVChipkaartProduct(Kn, Pn);
-           //             // Adds product with card to ov_chipkaart
-           //             ovChipkaart.addProduct(ovp);
-           //             // Adds product with card to product
-           //             product.addProduct(ovp);
-           //         }
-           //     }
-           // }
-
-            //st2.close();
-            return OVChipkaartList;
+            return OVChipkaarten;
 
         } catch (SQLException sqlex) {
             System.err.println("Error bij FindAll OVChipkaarten: " + sqlex);

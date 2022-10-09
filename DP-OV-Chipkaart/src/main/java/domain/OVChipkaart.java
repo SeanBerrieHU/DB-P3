@@ -48,6 +48,10 @@ public class OVChipkaart {
         }
     }
 
+    public void removeOVProduct(Product product){
+        productenLijst.remove(product);
+    }
+
 
     public String toString(){
         return "{ #" +  kaartNummer + ", " +geldigTot + ", " + klasse + ", €" + saldo + " #" + reizigerId + "}";

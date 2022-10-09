@@ -40,6 +40,8 @@ public class ProductDAOPsql implements ProductDAO {
                 st2.setInt(1, ovChipkaart.getKaartNummer());
                 st2.setInt(2, product.getProductNummer());
                 st2.executeUpdate();
+
+                ovChipkaart.removeOVProduct(product);
             }
 
             st.close();
@@ -67,14 +69,54 @@ public class ProductDAOPsql implements ProductDAO {
             st.close();
 
 
-            List<OVChipkaart> OVChipkaarten = product.getOVChipkaarten();
-            for(OVChipkaart ovChipkaart: OVChipkaarten){
-                PreparedStatement st2 = conn.prepareStatement("INSERT INTO ov_chipkaart_product(kaart_nummer,product_nummer) VALUES(?,?)");
-                st2.setInt(1, ovChipkaart.getKaartNummer());
-                st2.setInt(2, product.getProductNummer());
-                st2.executeUpdate();
+            List<Integer> OVChipkaartLijstDB = new ArrayList<>();
+            String query2 = "SELECT * FROM ov_chipkaart_product WHERE product_nummer=?";
+            PreparedStatement st2 = conn.prepareStatement(query2);
+            st2.setInt(1, product.getProductNummer());
+            ResultSet rs = st2.executeQuery();
+
+            while (rs.next()) {
+                int OVChipkaart = rs.getInt("kaart_nummer");
+                OVChipkaartLijstDB.add(OVChipkaart);
             }
 
+            st2.close();
+
+
+
+            List<OVChipkaart> OVChipkaarten = product.getOVChipkaarten();
+            for(OVChipkaart ovChipkaart: OVChipkaarten){
+
+                ovChipkaart.addOVProduct(product);
+                int OVChipkaartNummer = ovChipkaart.getKaartNummer();
+
+                // Database doesn't contain OV Card -> Add card to database
+                if(!OVChipkaartLijstDB.contains(OVChipkaartNummer)){
+                    PreparedStatement st3 = conn.prepareStatement("INSERT INTO ov_chipkaart_product(kaart_nummer,product_nummer) VALUES(?,?)");
+                    st3.setInt(1, ovChipkaart.getKaartNummer());
+                    st3.setInt(2, product.getProductNummer());
+                    st3.executeUpdate();
+                    st3.close();
+                }
+
+
+                // Checks if card in database also is in OVChipkaartList -> (FALSE) -> delete product
+                boolean cardFoundInOVList = false;
+                for(int OVCkNr: OVChipkaartLijstDB){
+                    if(OVCkNr == ovChipkaart.getKaartNummer()){
+                        cardFoundInOVList = true;
+                    }
+                }
+
+                if(!cardFoundInOVList){
+                    PreparedStatement st4 = conn.prepareStatement("DELETE FROM ov_chipkaart_product WHERE kaart_nummer=? AND product_nummer=?");
+                    st4.setInt(1, ovChipkaart.getKaartNummer());
+                    st4.setInt(2, product.getProductNummer());
+                    st4.executeUpdate();
+                    st4.close();
+                }
+
+            }
 
             return true;
 
@@ -90,6 +132,11 @@ public class ProductDAOPsql implements ProductDAO {
 
         try {
 
+            List<OVChipkaart> OVChipkaarten = product.getOVChipkaarten();
+            for(OVChipkaart ovChipkaart: OVChipkaarten){
+                ovChipkaart.removeOVProduct(product);
+            }
+
             int productNummer = product.getProductNummer();
 
             String OVProductQuery = "DELETE FROM ov_chipkaart_product o WHERE o.product_nummer = ?;";
@@ -98,11 +145,11 @@ public class ProductDAOPsql implements ProductDAO {
             OVProductQuerySt.executeUpdate();
             OVProductQuerySt.close();
 
-           // String productQuery = "DELETE FROM product p WHERE p.product_nummer = ?;";
-           // PreparedStatement productSt = conn.prepareStatement(productQuery);
-           // productSt.setInt(1, productNummer);
-           // productSt.executeUpdate();
-           // productSt.close();
+            String productQuery = "DELETE FROM product p WHERE p.product_nummer = ?;";
+            PreparedStatement productSt = conn.prepareStatement(productQuery);
+            productSt.setInt(1, productNummer);
+            productSt.executeUpdate();
+            productSt.close();
 
             return true;
 
@@ -135,6 +182,7 @@ public class ProductDAOPsql implements ProductDAO {
 
                 Product product = new Product(Pn, Nm, Bs, Pr);
                 producten.add(product);
+                ovChipkaart.addOVProduct(product);
             }
 
             st.close();
@@ -166,6 +214,11 @@ public class ProductDAOPsql implements ProductDAO {
 
                 Product product = new Product(Pn, Nm, Bs, Pr);
                 producten.add(product);
+
+                List<OVChipkaart> OVChipkaarten = product.getOVChipkaarten();
+                for(OVChipkaart ovChipkaart: OVChipkaarten){
+                    ovChipkaart.addOVProduct(product);
+                }
             }
 
             st.close();
